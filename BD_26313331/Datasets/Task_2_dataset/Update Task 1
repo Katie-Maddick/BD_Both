@@ -1,0 +1,47 @@
+# Import
+import pandas as pd
+from collections import Counter
+
+# Read in data
+noErrDatTime = pd.read_csv('AComp_Passenger_data_no_error_DateTime.csv')
+passDat = pd.read_csv('AComp_Passenger_data.csv')
+
+# Read in and assign column names
+# Passengar data
+cols = ['PassengerID','FlightID','From','To','DepTime','TotalTime']
+noErr = pd.read_csv('AComp_Passenger_data_no_error.csv', names=cols)
+
+# Top 30
+cols = ['AirportName','Code','Latitude','Longitude']
+top30 = pd.read_csv('Top30_airports_LatLong.csv', names=cols)
+
+# Count number of each instance
+numFrom = noErr['From'].tolist()
+
+def count_words(numFrom):
+    counter = Counter()
+    for To in numFrom:
+        words = To.split()
+        counter.update(words)
+    return counter
+
+counter = count_words(numFrom)
+
+# Get list of airports
+codes = top30['Code'].tolist()
+visited = [] 
+
+# Finds all the visited airports
+for i in range(0,len(numFrom)-1):
+    for j in range(0,len(codes)-1):
+        visitLen = len(visited)-1
+        if numFrom[i] == codes[j]:
+            visited.append(codes[j])
+
+# Finds unvisited aiports
+visited = list(set(visited))
+noVisits = list(set(codes) - set(visited))
+
+# Shows information
+print('Times airports were visited: ', counter)
+print('Unused airports: ', noVisits)
