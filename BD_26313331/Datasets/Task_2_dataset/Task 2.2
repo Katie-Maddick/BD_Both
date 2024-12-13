@@ -1,0 +1,41 @@
+# Imports
+import sys
+from datetime import datetime, timedelta
+
+# List of flights
+Flights = noErr['FlightID'].tolist()
+
+# List of departures
+depEpoch = noErr['DepTime'].tolist()
+
+# Convert to GMT
+depGMT = []
+
+for time in range(0, len(depEpoch)):
+    t = datetime.fromtimestamp(depEpoch[time])
+    depGMT.append(t)
+
+# Time of flight
+time = noErr['TotalTime'].tolist()
+
+# List of arrivals
+arr = []
+
+for times in range(0,len(time)):
+    time_change = timedelta(minutes=time[times]) 
+    new_time = depGMT[times] + time_change 
+    arr.append(new_time)
+
+# Number of passengers
+def count_words(Flights):
+    counter = Counter()
+    for passenger in Flights:
+        words = passenger.split()
+        counter.update(words)
+    return counter
+
+counter = count_words(Flights)
+items = counter.items()
+
+for i in range(0, len(arr)):
+    print('Code and count: ', 0, ', Departure: ', depGMT[i], ', Arrival: ', arr[i])
