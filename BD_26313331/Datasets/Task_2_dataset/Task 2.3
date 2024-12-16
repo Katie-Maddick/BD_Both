@@ -42,13 +42,11 @@ for i in range(0,5):
     top5.append(counter_passengers_list[i])
 
 # Total travelled by each passenger
-flights_taken = []
-for i in range(4):
-    for j in range(0,len(Passengers)):
-        if Passengers[j] == top5[i][0]:
-            flights_taken.append(j)
+flights_taken_0 = []
+for j in range(0,len(Passengers)):
+    if Passengers[j] == top5[0][0]:
+        flights_taken_0.append(Flights[j])
 
-print(counter_passengers)
-print(len(flights_taken))
+print(flights_taken_0)
 
 # Passengers with most air miles
