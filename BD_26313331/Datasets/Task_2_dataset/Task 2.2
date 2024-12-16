@@ -35,7 +35,9 @@ def count_words(Flights):
     return counter
 
 counter = count_words(Flights)
-items = counter.items()
 
-for i in range(0, len(arr)):
-    print('Code and count: ', 0, ', Departure: ', depGMT[i], ', Arrival: ', arr[i])
+counter_keys = list(counter.keys())
+counter_values = list(counter.values())
+
+for i in range(0, len(counter_keys)):
+    print('Code: ', counter_keys[i],' Counter: ', counter_values[i],', Departure: ', depGMT[i], ', Arrival: ', arr[i])
