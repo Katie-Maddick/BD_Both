@@ -1,0 +1,203 @@
+import findspark
+import streamlit
+findspark.init()
+
+import pyspark
+
+from pyspark.sql import SparkSession
+spark = SparkSession.builder.getOrCreate()
+df = spark.sql("select 'spark' as hello")
+df.show()
+
+# Import
+import pandas as pd
+from collections import Counter
+
+# Read in data
+noErrDatTime = pd.read_csv('AComp_Passenger_data_no_error_DateTime.csv')
+passDat = pd.read_csv('AComp_Passenger_data.csv')
+
+# Read in and assign column names
+# Passengar data
+cols = ['PassengerID','FlightID','From','To','DepTime','TotalTime']
+noErr = pd.read_csv('AComp_Passenger_data_no_error.csv', names=cols)
+
+# Top 30
+cols = ['AirportName','Code','Latitude','Longitude']
+top30 = pd.read_csv('Top30_airports_LatLong.csv', names=cols)
+
+# Count number of each instance
+numFrom = noErr['From'].tolist()
+
+def count_words(numFrom):
+    counter = Counter()
+    for To in numFrom:
+        words = To.split()
+        counter.update(words)
+    return counter
+
+counter_from = count_words(numFrom)
+
+# Get list of airports
+codes = top30['Code'].tolist()
+visited = [] 
+
+# Finds all the visited airports
+for i in range(0,len(numFrom)-1):
+    for j in range(0,len(codes)-1):
+        visitLen = len(visited)-1
+        if numFrom[i] == codes[j]:
+            visited.append(codes[j])
+
+# Finds unvisited aiports
+visited = list(set(visited))
+noVisits = list(set(codes) - set(visited))
+
+# Shows information
+print('Times airports were visited: ', counter_from)
+print('Unused airports: ', noVisits)
+
+# Imports
+import sys
+from datetime import datetime, timedelta
+
+# List of flights
+Flights = noErr['FlightID'].tolist()
+
+# List of departures
+depEpoch = noErr['DepTime'].tolist()
+
+# Convert to GMT
+depGMT = []
+
+for time in range(0, len(depEpoch)):
+    t = datetime.fromtimestamp(depEpoch[time])
+    depGMT.append(t)
+
+# Time of flight
+time = noErr['TotalTime'].tolist()
+
+# List of arrivals
+arr = []
+
+for times in range(0,len(time)):
+    time_change = timedelta(minutes=time[times]) 
+    new_time = depGMT[times] + time_change 
+    arr.append(new_time)
+
+# Number of passengers
+def count_words(Flights):
+    counter = Counter()
+    for passenger in Flights:
+        words = passenger.split()
+        counter.update(words)
+    return counter
+
+counter_flights = count_words(Flights)
+
+counter_keys = list(counter_flights.keys())
+counter_values = list(counter_flights.values())
+
+for i in range(0, len(counter_keys)):
+    print('Code: ', counter_keys[i],' Counter: ', counter_values[i],', Departure: ', depGMT[i], ', Arrival: ', arr[i])
+
+# Nautical miles
+# 1. Get the airport codes
+# 2. Get the codes latitude and longitude
+# 3. Calculate the difference
+# 4. Store
+
+# Create list of all passengers 
+Passengers = noErr['PassengerID'].tolist()
+
+# Count the number of flights each has taken
+def count_words(Passengers):
+    counter = Counter()
+    for passenger in Passengers:
+        words = passenger.split()
+        counter.update(words)
+    return counter
+
+counter_passengers = count_words(Passengers)
+counter_passengers_list = counter_passengers.most_common()
+
+# Get list of all destinations
+numTo = noErr['To'].tolist()
+
+# Calculate distances
+distances = [[]]*len(numTo)
+
+for i in range(0,len(numTo)):
+    if noErr['From'][i] == numFrom[i] and noErr['To'][i] == numTo[i]:
+        flightID = Flights[i]
+    for j in range(0,30):
+        if top30['Code'][j] == numFrom[i]:
+            lat_from = top30['Latitude'][j]
+            lon_from = top30['Longitude'][j]
+        if top30['Code'][j] == numTo[i]:
+            lat_to = top30['Latitude'][j]
+            lon_to = top30['Longitude'][j]
+    dist = (lat_to - lat_from) + (lon_to - lon_from)
+    if dist < 0:
+         dist *= -1
+    distances[i] = [flightID,dist]
+
+# Get passengers with the most flights taken
+top5 = []
+
+for i in range(0,5):
+    top5.append(counter_passengers_list[i])
+
+# Total travelled by each passenger
+flights_taken_0 = []
+flights_taken_1 = []
+flights_taken_2 = []
+flights_taken_3 = []
+flights_taken_4 = []
+for j in range(0,len(Passengers)):
+    if Passengers[j] == top5[0][0]:
+        flights_taken_0.append(Flights[j])
+    if Passengers[j] == top5[1][0]:
+        flights_taken_1.append(Flights[j])
+    if Passengers[j] == top5[2][0]:
+        flights_taken_2.append(Flights[j])
+    if Passengers[j] == top5[3][0]:
+        flights_taken_3.append(Flights[j])
+    if Passengers[j] == top5[4][0]:
+        flights_taken_4.append(Flights[j])
+
+# Passengers with most air miles
+pass_dist_0 = 0
+pass_dist_1 = 0
+pass_dist_2 = 0
+pass_dist_3 = 0
+pass_dist_4 = 0
+
+for i in range(0, len(flights_taken_0)):
+        for j in range(0,len(distances)):
+            if flights_taken_0[i] == distances[j][0]:
+                pass_dist_0 += distances[j][1]
+
+for i in range(0, len(flights_taken_1)):
+        for j in range(0,len(distances)):
+            if flights_taken_1[i] == distances[j][0]:
+                pass_dist_1 += distances[j][1]
+
+for i in range(0, len(flights_taken_2)):
+        for j in range(0,len(distances)):
+            if flights_taken_2[i] == distances[j][0]:
+                pass_dist_2 += distances[j][1]
+
+for i in range(0, len(flights_taken_3)):
+        for j in range(0,len(distances)):
+            if flights_taken_3[i] == distances[j][0]:
+                pass_dist_3 += distances[j][1]
+
+for i in range(0, len(flights_taken_4)):
+        for j in range(0,len(distances)):
+            if flights_taken_4[i] == distances[j][0]:
+                pass_dist_4 += distances[j][1]
+
+highest = max(pass_dist_0,pass_dist_1,pass_dist_2,pass_dist_3,pass_dist_4)
+
+print('The largest number of miles is',highest,'by',top5[0][0],'.')
