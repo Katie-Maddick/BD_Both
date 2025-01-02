@@ -55,6 +55,8 @@ noVisits = list(set(codes) - set(visited))
 print('Times airports were visited: ', counter_from)
 print('Unused airports: ', noVisits)
 
+###############################################################################
+
 # Imports
 import sys
 from datetime import datetime, timedelta
@@ -98,6 +100,8 @@ counter_values = list(counter_flights.values())
 
 for i in range(0, len(counter_keys)):
     print('Code: ', counter_keys[i],' Counter: ', counter_values[i],', Departure: ', depGMT[i], ', Arrival: ', arr[i])
+
+#####################################################################################
 
 # Nautical miles
 # 1. Get the airport codes
