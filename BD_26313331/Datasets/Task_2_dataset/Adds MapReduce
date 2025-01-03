@@ -122,7 +122,7 @@ for i in range(0, len(counter_keys)):
 Passengers = noErr['PassengerID'].tolist()
 
 # Count the number of flights each has taken
-def count_words(Passengers):
+def count_pass(Passengers):
     counter = Counter()
     for passenger in Passengers:
         words = passenger.split()
@@ -131,7 +131,7 @@ def count_words(Passengers):
         counter.update(filtered)
     return counter
 
-counter_passengers = count_words(Passengers)
+counter_passengers = count_pass(Passengers)
 counter_passengers_list = counter_passengers.most_common()
 
 # Get list of all destinations
