@@ -96,14 +96,14 @@ for times in range(0,len(time)):
     arr.append(new_time)
 
 # Number of passengers
-def count_words(Flights):
+def count_(Flights):
     counter = Counter()
     for passenger in Flights:
         words = passenger.split()
         counter.update(words)
     return counter
 
-counter_flights = count_words(Flights)
+counter_flights = count_(Flights)
 
 counter_keys = list(counter_flights.keys())
 counter_values = list(counter_flights.values())
